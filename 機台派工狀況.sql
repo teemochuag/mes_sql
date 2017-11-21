@@ -1,5 +1,5 @@
 --機台派工狀況
---版本測試
+--版本測試66777
 WITH mach_default_min AS
   (SELECT Mes_Mach_B_T.Mach_Code Mach_Code,
     Mes_Mach_B_T.Mach_Name Mach_Name,
