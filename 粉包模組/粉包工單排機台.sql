@@ -11,6 +11,7 @@ DECLARE
   G_mach_code     VARCHAR2(10);
   G_min_ava_prod  NUMBER;
   G_main_ava_item NUMBER;
+  f_count          NUMBER:=0;
   CURSOR AVA_MACH
   IS --機台優先順序
     SELECT Mes_Mach_Daily_T.mach_code,
@@ -178,6 +179,7 @@ BEGIN
                 );
             END IF;
           ELSE            --組合機台
+            f_count :=0;
             FOR g_mach IN --機器可用，同組的機器
             (SELECT mach_code mach_code,
                 work_minute work_minute,
@@ -204,17 +206,19 @@ BEGIN
                 Mes_mach_daily_ID,Class_Code
             )
             LOOP
+            f_count := f_count +1;
+              dbms_output.put_line(g_mach.mach_code||'-'||f_count||'-'||g_mach.min_work_minute||'-'||l_unprod_min /2||'-'||g_mach.min_work_minute);
               SELECT ceil(Mach_Speed*g_mach.min_work_minute) into　l_unprod_qty
               FROM Mes_Mach_Item_Attr_T
               WHERE Mes_Mach_Item_Attr_T.item_no = PLAN_ITEM.item_no
               AND Mes_Mach_Item_Attr_T.mach_code = g_mach.mach_code;
---              dbms_output.put_line ('XXZ '||g_mach.min_work_minute||'\'||g_mach.mach_code||'\'||PLAN_ITEM.item_no);
-              IF g_mach.min_work_minute = 0  THEN --已經有一台沒有可用時間了，都不能排
+              
+              IF g_mach.min_work_minute = 0 and f_count = 1  THEN --已經有一台沒有可用時間了，都不能排
               EXIT;
               ELSE
               IF l_unprod_min /2                 > g_mach.min_work_minute THEN --(製作耗時)/2 > 最小可用
                 UPDATE mes_mach_daily_t
-                SET work_minute = g_mach.min_work_minute
+                SET work_minute = 0--g_mach.min_work_minute
                 WHERE Mes_Mach_Daily_T.Mes_Mach_Daily_ID = g_mach.mes_mach_daily_ID;
 --                dbms_output.put_line ('(製作耗時)/2 > 最小可用 '||l_unprod_min/2||'\'||g_mach.min_work_minute||'\'||l_unprod_qty||'\'||g_mach.mach_code);
                 INSERT
