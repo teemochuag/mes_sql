@@ -183,7 +183,8 @@ BEGIN
                 work_minute work_minute,
                 MIN(work_minute) min_work_minute ,
                 Mes_mach_daily_ID mes_mach_daily_ID,
-                work_minute - MIN(work_minute) ava_mach_min
+                work_minute - MIN(work_minute) ava_mach_min,
+                Class_Code
               FROM mes_mach_daily_t
               WHERE mes_mach_daily_t.plan_date = R_AVA_MACH.Plan_Date
               AND Class_Code                   = R_AVA_MACH.class_code
@@ -200,7 +201,7 @@ BEGIN
               AND work_minute <> 0
               GROUP BY mach_code,
                 work_minute,
-                Mes_mach_daily_ID
+                Mes_mach_daily_ID,Class_Code
             )
             LOOP
               SELECT ceil(Mach_Speed*g_mach.min_work_minute) into¡@l_unprod_qty
