@@ -24,7 +24,7 @@ WITH ware_num AS
       mfa001.item_short_name item_short_name,
       wms005.id ,
       wms245.car_group car_group,
-      wms007.manu_date¡@manu_date,
+      wms007.manu_date manu_date,
       Wms221.Ware_Area_Id ware_area_id,
       SUM(Wms007.End_Qty) end_qty
     FROM wms006
@@ -180,7 +180,7 @@ WITH ware_num AS
   WHERE Wms245.Sale_Date >= TRUNC(sysdate)
   AND Wms092.Scrap_Code  IS NULL
   )
-SELECT ¡@order_num.item_no¡@item_no,
+SELECT  order_num.item_no item_no,
   order_num.order_num order_num,
   order_num.order_no order_no,
   out_num.out_num2 order_no2
